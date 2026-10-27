@@ -59,6 +59,14 @@
 .filter-list::-webkit-scrollbar{display:none}
 .filter-chip{flex:0 0 auto;white-space:nowrap}
 
+/* Anti-download: black overlay snaps on before an OS screenshot fires */
+.screenshot-guard{position:fixed;inset:0;z-index:2147483647;background:#000;opacity:0;pointer-events:none;transition:opacity .2s var(--ease)}
+.screenshot-guard.is-active{opacity:1;transition:none}
+/* Anti-download: no long-press menu, no selection on photos */
+img,.photo-card{-webkit-touch-callout:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-user-drag:none}
+img{-webkit-user-drag:none!important;pointer-events:none!important}
+a img{pointer-events:auto!important}
+
 /* Paired split-photo cards sit closer, like a diptych */
 .photo-card.is-paired{margin-left:6px}
 .photo-card.is-paired + .photo-card.is-paired{margin-left:0}

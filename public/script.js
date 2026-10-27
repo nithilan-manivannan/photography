@@ -5,6 +5,28 @@
   const lightbox = document.querySelector('#lightbox');
   const lightboxImage = document.querySelector('#lightboxImage');
   const heroCount = document.querySelector('#heroCount');
+
+  /* ── Download / screenshot deterrents ─────────────────────────
+     1. Block right-click "Save image as"
+     2. Block drag-and-drop of images
+     3. Block the multi-finger (3+) swipe-down screenshot gesture
+        used by many Android skins — paint the screen black before
+        the OS snapshot fires. */
+  document.addEventListener('contextmenu', event => { event.preventDefault(); });
+  document.addEventListener('dragstart', event => {
+    if (event.target.closest('img')) event.preventDefault();
+  });
+  const guard = document.createElement('div');
+  guard.className = 'screenshot-guard';
+  guard.setAttribute('aria-hidden', 'true');
+  document.body.append(guard);
+  const showGuard = () => guard.classList.add('is-active');
+  const maybeHideGuard = event => { if (event.touches.length === 0) guard.classList.remove('is-active'); };
+  document.addEventListener('touchstart', event => { if (event.touches.length >= 3) showGuard(); }, { passive: true, capture: true });
+  document.addEventListener('touchmove', event => { if (event.touches.length >= 3) showGuard(); }, { passive: true, capture: true });
+  document.addEventListener('touchend', maybeHideGuard, { passive: true, capture: true });
+  document.addEventListener('touchcancel', maybeHideGuard, { passive: true, capture: true });
+
   const bundled = [
     ['images/mysore-beech/1.webp','Last light by the water','Mysore Water'],
     ['images/mysore-beech/2.webp','Water study 02','Mysore Water'],
