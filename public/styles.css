@@ -524,3 +524,30 @@ body::after{
 @media(prefers-reduced-motion:reduce){
   .hero h1,.section-heading h2,.about-content h2,.gallery-group-heading h3,.ticker span{animation:none!important}
 }
+
+/* ----------------------------------------------------------------
+   CONTACT CTA PASS — centered white liquid-glass pill button
+   ---------------------------------------------------------------- */
+.contact-content{display:flex;align-items:center;justify-content:center}
+.contact-link{
+  display:inline-flex;align-items:center;gap:15px;
+  color:#181510;background:linear-gradient(180deg,#ffffff,#f4efe2 88%,#ece5d4);
+  border:1px solid rgba(255,255,255,.85);
+  -webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);
+  border-radius:999px;padding:18px 32px;min-height:56px;
+  font-size:clamp(17px,2.2vw,24px);letter-spacing:.09em;
+  box-shadow:0 16px 44px -16px rgba(0,0,0,.6),inset 0 1.5px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,0,0,.07);
+  transition:transform .4s var(--spring),box-shadow .4s var(--ease),background .3s var(--ease)}
+.contact-link::after{content:none}
+.contact-link .icon,.contact-link .icon-ig{color:var(--gold-deep)}
+.contact-link .icon{transition:transform .4s var(--spring)}
+@media(hover:hover) and (pointer:fine){
+  .contact-link:hover{
+    background:linear-gradient(180deg,#fffdf6,#ffefd0);
+    box-shadow:0 20px 56px -18px rgba(0,0,0,.68),0 0 0 1px rgba(230,199,110,.35),0 8px 30px -6px rgba(230,199,110,.35),inset 0 1.5px 0 #fff}
+  .contact-link:hover .icon{transform:translate(4px,-4px)}
+}
+.contact-link:active{transform:scale(.97)}
+@media(max-width:640px){
+  .contact-link{min-height:52px;padding:15px 26px;font-size:17px}
+}
