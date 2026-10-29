@@ -783,3 +783,5 @@ body::after{
 .lightbox{color:#f2eee5}
 /* restore the gradient sweep on the ticker (was painted over) */
 .ticker span{color:transparent}
+/* -- Repair the gap before the footer (contact section deleted) -- */
+.site-footer{margin-top:20px}
