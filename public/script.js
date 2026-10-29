@@ -91,31 +91,34 @@
     'Pondicherry','Malleshwaram','After Hours'];
   const categories = ORDER.filter(category => photos.some(photo => photo.category === category))
     .concat(photos.map(photo => photo.category).filter(category => !ORDER.includes(category) && !categoriesIncludes(category)));
-  function categoriesIncludes(category) { return ORDER.includes(category); }
-  let activeFilter = 'all';
   let currentIndex = 0;
   document.querySelector('#year').textContent = new Date().getFullYear();
 
-  function updateFilters() {
+  /* ── Chips are an ALBUM INDEX now: clicking one glides the page to
+     that album's position instead of re-rendering only that album.
+     Anchors keep native fallback (html{scroll-behavior}) when JS is
+     off, and the liquid scroll module takes the wheel when it's on. */
+  const slugify = text => 'album-' + text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  function updateChips() {
     filterList.replaceChildren();
-    [['all','All work'], ...categories.map(category => [category,category])].forEach(([value,label]) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `filter-chip${activeFilter === value ? ' is-active' : ''}`;
-      button.textContent = label;
-      button.addEventListener('click', () => { activeFilter = value; updateFilters(); render(); });
-      filterList.append(button);
+    [['#gallery', 'All work'], ...categories.map(category => ['#' + slugify(category), category])].forEach(([hash, label]) => {
+      const chip = document.createElement('a');
+      chip.className = 'filter-chip';
+      chip.href = hash;
+      chip.textContent = label;
+      filterList.append(chip);
     });
   }
 
   function render() {
-    const shown = photos.filter(photo => activeFilter === 'all' || photo.category === activeFilter);
+    const shown = photos;
     const groups = categories.filter(category => shown.some(photo => photo.category === category));
     gallery.replaceChildren();
     groups.forEach(category => {
       const groupPhotos = shown.filter(photo => photo.category === category);
       const section = document.createElement('section');
       section.className = 'gallery-group';
+      section.id = slugify(category);
       const heading = document.createElement('div');
       heading.className = 'gallery-group-heading';
       const title = document.createElement('h3');
@@ -151,7 +154,7 @@
       section.append(heading,grid);
       gallery.append(section);
     });
-    count.innerHTML = `<strong>${shown.length} frames</strong><br>across ${groups.length} ${groups.length === 1 ? 'collection' : 'collections'}`;
+    count.innerHTML = `<strong>${photos.length} frames</strong><br>across ${groups.length} ${groups.length === 1 ? 'collection' : 'collections'}`;
     heroCount.textContent = `01 / ${photos.length}`;
   }
 
@@ -180,8 +183,66 @@
     if (event.key === 'ArrowLeft') moveLightbox(-1);
     if (event.key === 'ArrowRight') moveLightbox(1);
   });
-  updateFilters();
+  /* ── Album scrollspy: highlight the chip of the album you're in ── */
+  const chips = () => Array.from(filterList.querySelectorAll('.filter-chip'));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setActiveChip() {
+    const marker = window.scrollY + 170;
+    let active = '#gallery';
+    document.querySelectorAll('.gallery-group').forEach(section => {
+      if (section.getBoundingClientRect().top + window.scrollY <= marker) active = '#' + section.id;
+    });
+    chips().forEach(chip => {
+      const on = chip.getAttribute('href') === active;
+      chip.classList.toggle('is-active', on);
+      if (on) chip.setAttribute('aria-current', 'true'); else chip.removeAttribute('aria-current');
+    });
+    /* liquid-glass surge on the heading of the album just jumped to */
+    if (pendingSurge && active === pendingSurge) {
+      const group = document.querySelector(pendingSurge);
+      pendingSurge = null;
+      surge(group);
+    }
+    return active;
+  }
+  let spyTicking = false;
+  window.addEventListener('scroll', () => {
+    if (spyTicking) return;
+    spyTicking = true;
+    window.requestAnimationFrame(() => { setActiveChip(); spyTicking = false; });
+  }, { passive: true });
+  window.addEventListener('resize', () => { setActiveChip(); }, { passive: true });
+
+  /* ── Arrival glass: when a chip is clicked, remember the album and
+     surface a liquid-glass plate under its heading when you land.
+     If you're already there, it surfaces right away. ── */
+  let pendingSurge = null;
+  function surge(group) {
+    if (reduced || !group) return;
+    const heading = group.querySelector('.gallery-group-heading');
+    if (!heading) return;
+    heading.classList.remove('is-surfaced');
+    void heading.offsetWidth;
+    heading.classList.add('is-surfaced');
+    window.setTimeout(() => heading.classList.remove('is-surfaced'), 1800);
+  }
+  filterList.addEventListener('click', event => {
+    const chip = event.target.closest('.filter-chip');
+    if (!chip || reduced) return;
+    const hash = chip.getAttribute('href');
+    const group = hash && hash !== '#gallery' ? document.querySelector(hash) : null;
+    if (group && group.getBoundingClientRect().top < 260 && group.getBoundingClientRect().top > -600) {
+      surge(group); /* already looking at it */
+      return;
+    }
+    pendingSurge = hash;
+    window.setTimeout(() => { if (pendingSurge === hash) pendingSurge = null; }, 3000);
+  });
+
+  updateChips();
   render();
+  setActiveChip();
 })();
 
 /* ─────────────────────────────────────────────────────────────────
