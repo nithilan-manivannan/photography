@@ -220,8 +220,8 @@ html.motion .photo-card.is-ready img.img-loaded,html.motion .photo-card.is-in im
 .signature{color:var(--text)}
 .signature span{color:var(--muted)}
 .about-coordinate{color:var(--muted)}
-.about-note p{opacity:.16;transform:translateY(14px);transition:opacity .8s var(--ease),transform .8s var(--spring);transition-delay:calc(var(--w,0)*90ms)}
-.about-note.is-scrub p{opacity:1;transform:none}
+html.motion .about-note p{opacity:.16;transform:translateY(14px);transition:opacity .8s var(--ease),transform .8s var(--spring);transition-delay:calc(var(--w,0)*90ms)}
+html.motion .about-note.is-scrub p{opacity:1;transform:none}
 .contact-content h2 em{color:transparent}
 .contact-link{color:var(--text);border-color:transparent;position:relative;font-size:15px}
 .contact-link::after{content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;transform:scaleX(.25);transform-origin:left;
@@ -526,7 +526,7 @@ body::after{
 }
 
 /* ----------------------------------------------------------------
-   CONTACT CTA PASS — centered white liquid-glass pill button
+   CONTACT CTA PASS ï¿½ centered white liquid-glass pill button
    ---------------------------------------------------------------- */
 .contact-content{display:flex;align-items:center;justify-content:center}
 .contact-link{
@@ -543,6 +543,7 @@ body::after{
 .contact-link .icon{transition:transform .4s var(--spring)}
 @media(hover:hover) and (pointer:fine){
   .contact-link:hover{
+    color:#181510;
     background:linear-gradient(180deg,#fffdf6,#ffefd0);
     box-shadow:0 20px 56px -18px rgba(0,0,0,.68),0 0 0 1px rgba(230,199,110,.35),0 8px 30px -6px rgba(230,199,110,.35),inset 0 1.5px 0 #fff}
   .contact-link:hover .icon{transform:translate(4px,-4px)}

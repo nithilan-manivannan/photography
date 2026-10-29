@@ -275,7 +275,7 @@
       }
     });
   }, { rootMargin: '-10% 0px -10% 0px' });
-  ['.work-section .section-heading', '.about-content h2', '.about-note', '.contact-content h2', '.contact-link', '.site-footer']
+  ['.work-section .section-heading', '.about-content h2', '.about-note']
     .forEach(selector => { document.querySelectorAll(selector).forEach(el => sectionObserver.observe(el)); });
 
   /* Wire cards that the gallery renders now or later */
@@ -336,10 +336,10 @@
 })();
 
 /* -----------------------------------------------------------------
-   Liquidscroll — inertial wheel scroller, Lenis-style, zero deps.
+   Liquidscroll ï¿½ inertial wheel scroller, Lenis-style, zero deps.
    Intercepts the wheel and eases the page toward it on an rAF loop,
    which is what makes desktop scrolling feel like liquid instead of
-   steps. Touch and prefers-reduced-motion keep NATIVE scrolling —
+   steps. Touch and prefers-reduced-motion keep NATIVE scrolling ï¿½
    this module bails out on both.
    ----------------------------------------------------------------- */
 (() => {
