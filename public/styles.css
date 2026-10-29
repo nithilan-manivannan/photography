@@ -552,3 +552,143 @@ body::after{
 @media(max-width:640px){
   .contact-link{min-height:52px;padding:15px 26px;font-size:17px}
 }
+
+/* ----------------------------------------------------------------
+   LIGHT ROYAL PASS — off-white champagne canvas.
+   Same architecture (liquid glass, gold shimmer, reveals, dot veil,
+   liquid scroll) — every colour re-tuned for a light material.
+   The dark lightbox stays dark on purpose: it is the viewing room.
+   ---------------------------------------------------------------- */
+
+:root{
+  color-scheme:light;
+  --paper:#f6f3ea;
+  --ink:#23261f;
+  --bg:#f6f3ea;
+  --surface:#ffffff;
+  --surface-2:#faf7ee;
+  --text:#23261f;
+  --muted:#6f7169;
+  --line:rgba(33,37,31,.12);
+  --line-strong:rgba(33,37,31,.18);
+  --brass:#8a6d2f;
+  --gold:#8a6d2f;
+  --gold-deep:#8a6d2f;
+  --gold-bright:#a7812f;
+  --gold-span:linear-gradient(110deg,#8a6d2f,#b8912f 30%,#d9b64e 50%,#b8912f 70%,#8a6d2f);
+}
+
+/* -- Canvas: warm ivory with champagne top glow, whisper of violet,
+      soft warm vignette — fixed layer, dot-veil above it -- */
+html{background:#f6f3ea;scrollbar-color:#c9b98a #efeade}
+body{background:transparent}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1100px 620px at 84% -12%,rgba(216,178,106,.20),transparent 62%),
+    radial-gradient(900px 720px at -14% 4%,rgba(186,158,214,.12),transparent 58%),
+    radial-gradient(1500px 860px at 50% 116%,rgba(206,168,96,.22),transparent 70%),
+    radial-gradient(140% 100% at 50% 50%,transparent 60%,rgba(120,98,60,.14) 100%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(138,109,47,.16) 1px,transparent 1.4px);
+  background-size:22px 26px;
+  -webkit-mask-image:radial-gradient(140% 96% at 50% 2%,#000 0%,rgba(0,0,0,.8) 30%,transparent 72%);
+  mask-image:radial-gradient(140% 96% at 50% 2%,#000 0%,rgba(0,0,0,.8) 30%,transparent 72%);
+}
+.grain{opacity:.035}
+::-webkit-scrollbar-track{background:#efeade}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#cbb87f,#8a6d2f);border-color:#efeade}
+
+/* -- Shimmering deep-gold gradient type (readable on ivory) -- */
+.hero h1,.section-heading h2,.about-content h2,
+.gallery-group-heading h3,.signature,.ticker span,.footer-wordmark,.wordmark-mark{
+  background-image:var(--gold-span)}
+.hero h1 em,.section-heading h2 em,.about-content h2 em{
+  color:#8a6d2f;text-shadow:0 0 30px rgba(138,109,47,.22)}
+.footer-wordmark span{color:#8a6d2f;text-shadow:0 0 26px rgba(138,109,47,.25)}
+.wordmark-mark span{color:#8a6d2f}
+.wordmark-name,.eyebrow,.ticker span b{color:#8a6d2f}
+
+/* -- Header: white liquid-glass pill -- */
+.site-header{
+  border-color:rgba(33,37,31,.10);
+  background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.35) 55%,rgba(255,255,255,.58));
+  box-shadow:0 18px 44px -20px rgba(90,70,20,.28),inset 0 1px 0 #fff,inset 0 -1px 0 rgba(33,37,31,.05)}
+.site-header::before{background:
+  radial-gradient(430px 150px at 14% -65%,rgba(214,172,92,.20),transparent 65%),
+  radial-gradient(380px 140px at 86% -75%,rgba(255,246,214,.22),transparent 65%)}
+.site-header::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent)}
+.site-header nav{color:var(--muted)}
+.site-header nav a:not(.nav-contact):hover{color:#8a6d2f}
+.nav-contact{color:#8a6d2f;border-color:rgba(138,109,47,.32);
+  background:linear-gradient(180deg,rgba(214,172,92,.16),rgba(214,172,92,.05))}
+@media(hover:hover) and (pointer:fine){
+  .nav-contact:hover{color:#141005;background:var(--gold-span)}
+}
+.text-link{border-color:rgba(138,109,47,.5);color:var(--text)}
+.text-link .icon,.contact-link .icon{color:#8a6d2f}
+
+/* -- Glass filter dock on ivory -- */
+.gallery-tools{border-color:rgba(33,37,31,.09);
+  background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,.25));
+  box-shadow:0 16px 40px -20px rgba(90,70,20,.22),inset 0 1px 0 rgba(255,255,255,.85)}
+.gallery-tools::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent)}
+.filter-chip{color:var(--muted);border-color:rgba(33,37,31,.10);background:rgba(255,255,255,.35)}
+@media(hover:hover) and (pointer:fine){
+  .filter-chip:hover{color:var(--ink);background:#fff;border-color:rgba(33,37,31,.2)}
+}
+.filter-chip.is-active{color:#141005;background:var(--gold-span);background-size:180% 100%;
+  box-shadow:0 5px 24px -6px rgba(138,109,47,.5),inset 0 1px 0 rgba(255,255,255,.55)}
+
+/* -- Section furniture -- */
+.about-rule{background:var(--line-strong)}
+.hero-caption{background:linear-gradient(0deg,rgba(20,16,8,.65),transparent)}
+.hero-caption{color:#f6f3ea}
+.hero-visual{background:#e9e2cf;border-radius:14px;box-shadow:0 32px 90px -44px rgba(80,60,20,.4)}
+.photo-card img{
+  background:linear-gradient(110deg,#edeadd,#f6f3ea,#edeadd);background-size:200% 100%;
+  filter:brightness(1) contrast(1.02);
+  box-shadow:0 26px 80px -34px rgba(90,70,30,.28)}
+.photo-card::after{background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(138,109,47,.09),transparent 65%)}
+@media(hover:hover) and (pointer:fine){
+  .photo-card:hover{box-shadow:0 26px 80px -34px rgba(150,110,30,.16)}
+}
+
+/* -- Ticker: champagne band -- */
+.ticker{border-block-color:rgba(33,37,31,.10);
+  background:linear-gradient(90deg,rgba(206,168,96,0),rgba(206,168,96,.14) 18%,rgba(206,168,96,.14) 82%,rgba(206,168,96,0))}
+.ticker span{color:#8a6d2f}
+.ticker span b{color:#8a6d2f;text-shadow:none}
+
+/* -- Royal footer: ivory parchment, deep-gold seal -- */
+.site-footer{border-top-color:rgba(33,37,31,.10);
+  background:
+    linear-gradient(180deg,rgba(206,168,96,.10),rgba(206,168,96,.02) 40%,transparent 72%),
+    radial-gradient(1100px 480px at 50% 128%,rgba(186,148,78,.18),transparent 72%),
+    rgba(255,255,255,.35)}
+.site-footer::before{background:linear-gradient(90deg,transparent,rgba(138,109,47,.5),transparent)}
+.footer-wordmark{background-image:var(--gold-span)}
+.site-footer p{color:#7a776c}
+.footer-link{color:#181510;border-color:rgba(33,37,31,.12);
+  background:linear-gradient(180deg,#ffffff,#f6f1e2);
+  box-shadow:0 10px 30px -14px rgba(90,70,20,.35),inset 0 1.5px 0 #fff}
+.footer-link .icon{color:#8a6d2f}
+@media(hover:hover) and (pointer:fine){
+  .footer-link:hover{color:#141005;border-color:rgba(138,109,47,.45);
+    box-shadow:0 12px 36px -14px rgba(138,109,47,.4)}
+}
+.site-footer small{color:#8a887d}
+
+/* -- White CTA (already white — now also inherits the new light stage) -- */
+.contact-link{color:#181510}
+
+/* -- Lightbox stays the dark viewing room -- */
+.lightbox::backdrop{background:rgba(28,24,16,.72);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+
+/* -- Mobile -- */
+@media(max-width:640px){
+  .hero{background:transparent}
+  .grain{opacity:.03}
+}
