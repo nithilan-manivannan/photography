@@ -284,3 +284,160 @@ dialog[open].lightbox figure img{animation:lightboxIn .5s var(--spring) both}
   .wordmark-mark{filter:none;animation:none}
   .scroll-progress{transition:none}
 }
+
+/* ----------------------------------------------------------------
+   ROYAL GLASS PASS � rich velvet-black canvas, liquid-glass chrome,
+   floating pill header, royal footer, wide-monitor gutters.
+   Appended last on purpose: cascade wins over the dark luxe block.
+   ---------------------------------------------------------------- */
+
+:root{
+  color-scheme:dark;
+  --gutter:clamp(18px,3.2vw,64px);
+  --glass-hi:rgba(255,255,255,.07);
+  --glass-lo:rgba(255,255,255,.018);
+  --glass-line:rgba(243,239,228,.13);
+  --velvet:#0b0907;
+}
+
+/* -- Rich royal canvas: gold duchy glow up top, imperial violet mist,
+      bronze court light at the horizon � painted on a fixed backdrop
+      layer so scrolling stays buttery (no bg-attachment repaints) -- */
+/* Only <html> carries the base colour so body stays transparent
+   and the fixed ::before backdrop layer can show through. */
+html{background:var(--velvet)}
+body{background:transparent}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1100px 620px at 84% -12%,rgba(228,190,112,.13),transparent 62%),
+    radial-gradient(900px 720px at -14% 4%,rgba(126,88,190,.10),transparent 58%),
+    radial-gradient(1500px 860px at 50% 116%,rgba(138,100,40,.24),transparent 70%),
+    radial-gradient(140% 100% at 50% 50%,transparent 55%,rgba(0,0,0,.52) 100%);
+}
+html{scroll-padding-top:120px;scrollbar-color:#6d5525 var(--velvet);scrollbar-width:thin}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--velvet)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#57431c,#8a6d2f);border-radius:8px;border:2px solid var(--velvet)}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#8a6d2f,#e6c76e)}
+
+/* -- Inline SVG icons: one stroke language everywhere -- */
+.icon{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:-.12em}
+.icon .dot{fill:currentColor;stroke:none}
+
+/* -- Header: floating liquid-glass pill, edge to edge -- */
+.site-header{
+  position:sticky;top:10px;z-index:1600;height:64px;
+  width:min(calc(100% - 24px),1840px);margin:12px auto 0;
+  padding:0 clamp(16px,2.4vw,34px);
+  border-radius:20px;border:1px solid var(--glass-line);
+  background:linear-gradient(180deg,var(--glass-hi),var(--glass-lo) 55%,rgba(255,255,255,.045));
+  -webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);
+  box-shadow:0 22px 55px -20px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.13),inset 0 -1px 0 rgba(0,0,0,.4);
+  overflow:hidden;transition:none}
+.site-header::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(430px 150px at 14% -65%,rgba(230,199,110,.16),transparent 65%),
+             radial-gradient(380px 140px at 86% -75%,rgba(255,243,196,.10),transparent 65%)}
+.site-header::after{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent)}
+.wordmark-mark{font-size:29px}
+.site-header nav{color:var(--muted);gap:clamp(14px,2.2vw,26px)}
+.site-header nav a{position:relative;padding:6px 2px;letter-spacing:.04em}
+.site-header nav a:not(.nav-contact)::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:var(--gold-grad);transform:scaleX(0);transform-origin:left;transition:transform .45s var(--spring)}
+@media(hover:hover) and (pointer:fine){
+  .site-header nav a:not(.nav-contact):hover{color:var(--gold-bright)}
+  .site-header nav a:not(.nav-contact):hover::after{transform:scaleX(1)}
+}
+.nav-contact{color:var(--gold);border-bottom-color:transparent;padding:7px 15px;border:1px solid var(--glass-line);border-radius:999px;
+  background:linear-gradient(180deg,rgba(230,199,110,.10),rgba(230,199,110,.03));
+  display:inline-flex;align-items:center;gap:7px;font-weight:600;
+  transition:color .3s var(--ease),box-shadow .35s var(--ease),border-color .35s var(--ease)}
+.nav-contact .icon{width:12px;height:12px}
+@media(hover:hover) and (pointer:fine){
+  .nav-contact:hover{color:#141005;background:var(--gold-grad);border-color:transparent;box-shadow:0 4px 24px -6px rgba(230,199,110,.5)}
+}
+.text-link .icon,.contact-link .icon{color:var(--gold)}
+.text-link .icon{transition:transform .45s var(--spring)}
+@media(hover:hover) and (pointer:fine){.text-link:hover .icon{transform:translateY(4px)}}
+.icon-ig{width:17px;height:17px}
+
+/* -- Glass filter dock (sticky under the pill header) -- */
+.gallery-tools{top:84px;border-radius:16px;margin:0 0 14px;padding:13px 16px;border:1px solid var(--glass-line);
+  background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
+  -webkit-backdrop-filter:blur(18px) saturate(1.45);backdrop-filter:blur(18px) saturate(1.45);
+  box-shadow:0 14px 42px -18px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.09)}
+.filter-chip{min-height:38px;padding:9px 15px;border-radius:999px;border:1px solid rgba(243,239,228,.1);
+  color:var(--muted);background:rgba(255,255,255,.035);font-size:10px;letter-spacing:.05em;
+  transition:color .3s var(--ease),background .3s var(--ease),border-color .3s var(--ease),transform .3s var(--spring),box-shadow .35s var(--ease)}
+@media(hover:hover) and (pointer:fine){.filter-chip:hover{color:var(--text);background:rgba(255,255,255,.075);border-color:rgba(243,239,228,.2);transform:translateY(-1px)}}
+
+/* -- Cards: warmer velvet plinth under the photos -- */
+.photo-card{border-radius:14px}
+.photo-card::after{background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(230,199,110,.14),transparent 65%)}
+.photo-card img{box-shadow:0 30px 66px -34px rgba(0,0,0,.9)}
+
+/* -- Ticker: full-bleed royal band -- */
+.ticker{max-width:none;padding:19px 0;border-block-color:var(--glass-line);
+  background:linear-gradient(90deg,rgba(230,199,110,0),rgba(230,199,110,.06) 18%,rgba(230,199,110,.06) 82%,rgba(230,199,110,0))}
+.ticker span{color:rgba(243,239,228,.6)}
+.ticker span b{color:var(--gold);text-shadow:0 0 12px rgba(230,199,110,.5)}
+
+/* -- Laptop guts: content hugs the edges, no 1440px cage -- */
+.hero,.work-section,.about-section,.contact-section,.site-footer{max-width:none;margin-left:0;margin-right:0}
+.hero{padding:91px var(--gutter) 102px}
+.work-section{padding:92px var(--gutter) 132px}
+.about-section{padding:0 var(--gutter) 112px}
+.contact-section{padding:0 var(--gutter) 96px}
+.about-coordinate{right:var(--gutter)}
+
+/* -- Lightbox: icons keep the glass roundels honest -- */
+.lightbox .icon{width:20px;height:20px;stroke-width:1.6}
+
+/* -- Royal footer: giant shimmering seal, glass Instagram pill -- */
+.site-footer{position:relative;overflow:hidden;margin-top:74px;padding:66px var(--gutter) 32px;
+  border-top:1px solid var(--glass-line);flex-wrap:wrap;align-items:flex-end;gap:16px 34px;
+  background:
+    linear-gradient(180deg,rgba(230,199,110,.055),rgba(230,199,110,.012) 40%,transparent 72%),
+    radial-gradient(1100px 480px at 50% 128%,rgba(138,104,36,.26),transparent 72%),
+    rgba(8,7,5,.4);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.site-footer::before{content:'';position:absolute;top:0;left:8%;right:8%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(230,199,110,.55),transparent)}
+.footer-wordmark{flex:1 0 100%;
+  font-size:clamp(52px,8vw,128px);letter-spacing:-.055em;line-height:.95;
+  background:linear-gradient(110deg,#8a6d2f,#e6c76e 35%,#fff3c4 50%,#e6c76e 65%,#8a6d2f);
+  background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmerFooter 8s linear infinite}
+.footer-wordmark span{color:var(--gold);background:none;text-shadow:0 0 30px rgba(230,199,110,.35)}
+@keyframes shimmerFooter{0%{background-position:130% 0}100%{background-position:-130% 0}}
+.site-footer p{font:italic 15px var(--serif);color:rgba(243,239,228,.68)}
+.footer-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:12px 22px;border-radius:999px;
+  border:1px solid var(--glass-line);color:var(--text);font-size:11px;letter-spacing:.08em;
+  background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.015));
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
+  box-shadow:0 10px 30px -14px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.09);
+  transition:color .3s var(--ease),border-color .35s var(--ease),box-shadow .35s var(--ease),background .35s var(--ease)}
+.footer-link .icon{color:var(--gold)}
+@media(hover:hover) and (pointer:fine){
+  .footer-link:hover{color:var(--gold-bright);border-color:rgba(230,199,110,.55);box-shadow:0 10px 34px -12px rgba(230,199,110,.28)}
+}
+.site-footer small{margin-left:auto;color:var(--muted)}
+
+/* -- Mobile -- */
+@media(max-width:640px){
+  :root{--gutter:clamp(16px,4.8vw,32px)}
+  .site-header{top:8px;margin:8px 10px 0;width:calc(100% - 20px);height:66px;border-radius:18px}
+  .gallery-tools{top:78px;padding:10px 12px}
+  .footer-wordmark{font-size:clamp(40px,11.5vw,64px)}
+  .site-footer{padding:52px 6% 28px;gap:14px 20px}
+  .contact-section{padding:0 6% 88px}
+  .about-content h2{font-size:48px}
+  .contact-content h2{font-size:clamp(40px,12vw,57px)}
+}
+
+/* Reduced motion: freeze the seal shimmer, keep everything readable */
+@media(prefers-reduced-motion:reduce){
+  .footer-wordmark{animation:none}
+  .wordmark-mark{animation:none}
+}

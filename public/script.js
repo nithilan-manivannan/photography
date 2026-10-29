@@ -334,3 +334,70 @@
     lightboxImage.addEventListener('load', replay);
   }
 })();
+
+/* -----------------------------------------------------------------
+   Liquidscroll — inertial wheel scroller, Lenis-style, zero deps.
+   Intercepts the wheel and eases the page toward it on an rAF loop,
+   which is what makes desktop scrolling feel like liquid instead of
+   steps. Touch and prefers-reduced-motion keep NATIVE scrolling —
+   this module bails out on both.
+   ----------------------------------------------------------------- */
+(() => {
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (reduced || !fine) return;
+
+  const EASE = 0.092;             /* smaller = silkier glide          */
+  const SNAP = 0.35;              /* px threshold to call it "there"  */
+  const limit = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+  let target = window.scrollY;
+  let current = target;
+  let rafId = null;
+  const clampTo = v => Math.min(Math.max(v, 0), limit());
+
+  function step() {
+    current += (target - current) * EASE;
+    if (Math.abs(target - current) < SNAP) {
+      current = target;
+      window.scrollTo({ top: current, behavior: 'instant' });
+      rafId = null;
+      return;
+    }
+    window.scrollTo({ top: current, behavior: 'instant' });
+    rafId = requestAnimationFrame(step);
+  }
+  const nudge = () => { if (rafId === null) rafId = requestAnimationFrame(step); };
+
+  /* native scrolls (keyboard, spacebar) pull our cursor back in sync */
+  window.addEventListener('scroll', () => {
+    if (rafId === null) { current = target = window.scrollY; }
+  }, { passive: true });
+
+  window.addEventListener('wheel', event => {
+    if (event.ctrlKey || event.deltaMode === 2) return;         /* pinch-zoom */
+    const t = event.target;
+    if (t instanceof Element && t.closest('dialog')) return;    /* lightbox scrolls itself */
+    event.preventDefault();
+    const line = event.deltaMode === 1 ? 16 : 1;                /* Firefox line mode */
+    target = clampTo(target + event.deltaY * line);
+    nudge();
+  }, { passive: false });
+
+  /* anchor links ride the same liquid curve */
+  document.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey) return;
+    const t = event.target;
+    const link = t instanceof Element && t.closest('a[href^="#"]');
+    if (!link) return;
+    const hash = link.getAttribute('href');
+    if (hash.length < 2) return;
+    const el = document.getElementById(hash.slice(1));
+    if (!el) return;                                            /* unknown target: native jump */
+    event.preventDefault();
+    target = clampTo(el.getBoundingClientRect().top + window.scrollY - 96);
+    nudge();
+  });
+
+  window.addEventListener('resize', () => { target = clampTo(target); nudge(); }, { passive: true });
+})();
