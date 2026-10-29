@@ -772,3 +772,14 @@ body::after{
 @media(max-width:640px){
   body::before{background:radial-gradient(800px 480px at 78% -14%,rgba(210,172,98,.10),transparent 70%)}
 }
+
+/* --------------------------------------------------------------
+   LIGHT PASS PATCH 3 — reviewer defects
+   -------------------------------------------------------------- */
+/* hero caption: pale-champagne label on the dark photo overlay */
+.hero-caption #heroCaption{color:#e9d9a8}
+/* dark viewing room keeps its own tokens, immune to light retints */
+.lightbox-close,.lightbox-nav{border-color:rgba(243,239,228,.18)}
+.lightbox{color:#f2eee5}
+/* restore the gradient sweep on the ticker (was painted over) */
+.ticker span{color:transparent}
