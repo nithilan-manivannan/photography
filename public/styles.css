@@ -692,3 +692,83 @@ body::after{
   .hero{background:transparent}
   .grain{opacity:.03}
 }
+
+/* ----------------------------------------------------------------
+   LIGHT ROYAL v2 — uniform ivory canvas + descender-safe type.
+   Fixes: g-tails clipped on gradient headings (line-box vs
+   background-clip:text), patchy shade while scrolling (fixed
+   vignette/glow layers), richness pass for the paper material.
+   ---------------------------------------------------------------- */
+
+:root{
+  --gold:#7a5c1e;
+  --gold-bright:#96742a;
+  --gold-span:linear-gradient(110deg,#7a5c1e,#a07c28 30%,#d3ab45 50%,#a07c28 70%,#7a5c1e);
+}
+
+/* -- 1. Descender-safe gradient type --
+   Roomier line boxes so glyph tails stay inside the painted
+   background; tiny bottom padding as insurance. */
+.hero h1{line-height:1.04;padding-bottom:.02em}
+.section-heading h2,.about-content h2{line-height:1.1;padding-bottom:.03em}
+.gallery-group-heading h3{line-height:1.12;padding-bottom:.03em}
+.footer-wordmark{line-height:1.03;overflow:visible}
+.signature{line-height:1.35;padding-bottom:.05em}
+.ticker span{line-height:1.4}
+
+/* heroTitle redefined WITHOUT clip-path (last @keyframes wins):
+   opacity + rise only — no inset edges anywhere near letters */
+@keyframes heroTitle{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* -- 2. Uniform paper — no more shifting shade while scrolling -- */
+html{background:#f5f0e2}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1200px 520px at 80% -18%,rgba(210,172,98,.11),transparent 70%),
+    radial-gradient(1000px 480px at 12% -14%,rgba(198,160,96,.07),transparent 70%);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(122,92,30,.13) 1px,transparent 1.4px);
+  background-size:22px 26px;
+  -webkit-mask-image:radial-gradient(150% 110% at 50% 0%,#000 0%,rgba(0,0,0,.85) 26%,transparent 62%);
+  mask-image:radial-gradient(150% 110% at 50% 0%,#000 0%,rgba(0,0,0,.85) 26%,transparent 62%);
+}
+.grain{opacity:.045}
+::-webkit-scrollbar-track{background:#f0ead9}
+::-webkit-scrollbar-thumb{border-color:#f0ead9}
+
+/* -- 3. Premium paper material — matted prints, deeper glow -- */
+.photo-card img{
+  box-shadow:
+    0 0 0 1px rgba(122,92,30,.16),
+    0 26px 70px -32px rgba(88,66,26,.34)}
+.photo-card::before{
+  background:linear-gradient(130deg,rgba(138,109,47,.9),rgba(138,109,47,.12) 40%,rgba(211,171,69,.75) 100%)}
+@media(hover:hover) and (pointer:fine){
+  .photo-card:hover{box-shadow:0 26px 74px -34px rgba(138,100,28,.2)}
+}
+.photo-card:hover img{
+  box-shadow:
+    0 0 0 1px rgba(122,92,30,.28),
+    0 30px 80px -32px rgba(88,66,26,.4)}
+.hero-visual{background:#ece5d0;box-shadow:0 34px 96px -44px rgba(88,66,26,.45),0 0 0 1px rgba(122,92,30,.14)}
+
+/* warmer, softer chrome so glass reads as cream, not white-out */
+.site-header{background:linear-gradient(180deg,rgba(255,252,242,.8),rgba(252,247,232,.45) 55%,rgba(255,250,236,.62))}
+.gallery-tools{background:linear-gradient(180deg,rgba(255,252,242,.62),rgba(250,245,228,.3));
+  box-shadow:0 16px 40px -20px rgba(96,72,24,.24),inset 0 1px 0 rgba(255,255,255,.9)}
+.site-footer{background:
+    linear-gradient(180deg,rgba(210,172,98,.12),rgba(210,172,98,.03) 40%,transparent 72%),
+    radial-gradient(1100px 480px at 50% 128%,rgba(186,148,78,.16),transparent 72%),
+    rgba(251,247,236,.4)}
+.ticker{background:linear-gradient(90deg,rgba(210,172,98,0),rgba(210,172,98,.16) 18%,rgba(210,172,98,.16) 82%,rgba(210,172,98,0))}
+
+/* theme eyeball candy: top title uses the richest gradient sweep */
+@media(max-width:640px){
+  body::before{background:radial-gradient(800px 480px at 78% -14%,rgba(210,172,98,.10),transparent 70%)}
+}
