@@ -441,3 +441,86 @@ html{scroll-padding-top:120px;scrollbar-color:#6d5525 var(--velvet);scrollbar-wi
   .footer-wordmark{animation:none}
   .wordmark-mark{animation:none}
 }
+
+/* ----------------------------------------------------------------
+   GLOSS & GRADIENT PASS
+   - shimmering gold gradient on (almost) all display type
+   - eyebrow dashes retired; tiny gold dots carry the rhythm
+   - dot-matrix veil on the fixed royal backdrop
+   - softer, deeper shadows (anti-harsh) + glossier glass
+   - contact section loses the headline, keeps one big glass link
+   ---------------------------------------------------------------- */
+
+/* -- Dot pattern veil: fine gold matrix fading down from the hero -- */
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(230,199,110,.14) 1px,transparent 1.4px);
+  background-size:22px 26px;
+  -webkit-mask-image:radial-gradient(140% 96% at 50% 2%,#000 0%,rgba(0,0,0,.8) 30%,transparent 72%);
+  mask-image:radial-gradient(140% 96% at 50% 2%,#000 0%,rgba(0,0,0,.8) 30%,transparent 72%);
+}
+
+/* -- Eyebrow labels: no more hyphens, pure gold letterspaced caps -- */
+.eyebrow{color:var(--gold);letter-spacing:.26em;font-weight:600;opacity:.92}
+.eyebrow-line{display:none}
+
+/* -- Gradient display text -- */
+.hero h1,.section-heading h2,.about-content h2{
+  background-image:var(--gold-grad);background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.gallery-group-heading h3{animation:shimmer 7.5s linear infinite}
+.section-heading h2,.about-content h2{animation:shimmer 6.5s linear infinite}
+
+/* em beats inside gradient headings turn solid high-gold for contrast */
+.hero h1 em,.section-heading h2 em,.about-content h2 em{
+  background:none;background-clip:border-box;-webkit-background-clip:border-box;
+  color:var(--gold-bright);animation:none;
+  text-shadow:0 0 34px rgba(230,199,110,.28)}
+
+/* hero h1 keeps its entrance AND gets the shimmer � two animations,
+   declared together so they don't cancel each other */
+@media(prefers-reduced-motion:no-preference){
+  .hero h1{animation:heroTitle .95s var(--spring) .3s forwards,shimmer 6.5s linear 1.6s infinite}
+}
+
+/* header wordmark becomes gradient metal too */
+.wordmark-mark{background-image:var(--gold-grad);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.wordmark-mark span{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--gold)}
+.wordmark-name{color:var(--gold)}
+
+/* signature + ticker catch the light as well */
+.signature{background-image:var(--gold-grad);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.signature span{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:var(--muted)}
+.ticker span{background-image:var(--gold-grad);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;opacity:.9}
+.ticker span b{background:none;color:var(--gold)}
+
+/* -- Soft light, not harsh shadows -- */
+.photo-card img{box-shadow:0 26px 80px -32px rgba(0,0,0,.5)}
+.hero-visual{box-shadow:0 32px 90px -42px rgba(0,0,0,.55)}
+.lightbox{box-shadow:0 50px 130px -42px rgba(0,0,0,.72),inset 0 1px 0 rgba(243,239,228,.09)}
+.photo-card:hover{box-shadow:0 30px 80px -34px rgba(230,199,110,.12)}
+
+/* -- Glossier glass -- */
+.gallery-tools::after{content:'';position:absolute;top:0;left:5%;right:5%;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.34),transparent)}
+.filter-chip.is-active{box-shadow:0 5px 24px -6px rgba(230,199,110,.5),inset 0 1px 0 rgba(255,255,255,.45)}
+.nav-contact{background:linear-gradient(180deg,rgba(230,199,110,.13),rgba(230,199,110,.04))}
+.footer-link{box-shadow:0 10px 32px -14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12)}
+
+/* -- Contact: headline gone, one oversized glass action -- */
+.contact-content{align-items:flex-start;justify-content:flex-start}
+.contact-link{gap:15px;padding:2px 0 13px;font-size:clamp(20px,2.6vw,30px);letter-spacing:.1em}
+.contact-link .icon-ig{width:clamp(24px,2.6vw,30px);height:clamp(24px,2.6vw,30px)}
+.contact-link span .icon{width:clamp(16px,1.6vw,20px);height:clamp(16px,1.6vw,20px)}
+@media(max-width:640px){
+  .contact-link{font-size:19px;min-height:44px}
+  .contact-link .icon-ig{width:23px;height:23px}
+}
+
+/* reduced motion: freeze the type shimmer (entry animation safety already exists) */
+@media(prefers-reduced-motion:reduce){
+  .hero h1,.section-heading h2,.about-content h2,.gallery-group-heading h3,.ticker span{animation:none!important}
+}
