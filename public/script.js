@@ -183,3 +183,154 @@
   updateFilters();
   render();
 })();
+
+/* ─────────────────────────────────────────────────────────────────
+   Motion layer — staggered reveals, 3D tilt, parallax, progress.
+   Self-contained: observes whatever the gallery renders, so filter
+   changes stay animated without touching the gallery logic above.
+   All animation is transform/opacity only; everything is gated on
+   prefers-reduced-motion; pointer-dependent effects need fine input.
+   ───────────────────────────────────────────────────────────────── */
+(() => {
+  const html = document.documentElement;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!reduced) html.classList.add('motion');
+
+  /* ── Gold scroll progress hairline (works even with reduced motion) ── */
+  const progress = document.querySelector('.scroll-progress');
+  if (progress) {
+    const paintProgress = () => {
+      const max = html.scrollHeight - window.innerHeight;
+      progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+    };
+    window.addEventListener('scroll', paintProgress, { passive: true });
+    paintProgress();
+  }
+  if (reduced) return; /* everything below is choreography */
+  const heroImage = document.querySelector('#heroImage');
+  function paintHero() {
+    if (!heroImage) return;
+    const y = Math.min(window.scrollY, window.innerHeight * 1.4);
+    heroImage.style.transform = `translate3d(0,${(y * -0.055).toFixed(1)}px,0) scale(1.06)`;
+  }
+  if (heroImage && window.matchMedia('(min-width:641px)').matches) {
+    /* subtle parallax: hero drifts slower than the page as you scroll */
+    let heroTicking = false;
+    window.addEventListener('scroll', () => {
+      if (heroTicking) return;
+      heroTicking = true;
+      window.requestAnimationFrame(() => { paintHero(); heroTicking = false; });
+    }, { passive: true });
+  }
+
+  /* Reveal machinery */
+  const cardObserver = new IntersectionObserver(entries => {
+    let batchIndex = 0;
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const card = entry.target;
+      cardObserver.unobserve(card);
+      const delay = Math.min(batchIndex * 70, 420);
+      card.style.setProperty('--d', `${delay}ms`);
+      card.classList.add('is-entering');
+      const settle = event => {
+        if (event && event.target && event.target !== card) return;
+        card.classList.remove('is-entering');
+        card.classList.add('is-in');
+        card.style.removeProperty('--d');
+      };
+      card.addEventListener('transitionend', settle, { once: true });
+      /* safety net if transitionend never fires */
+      window.setTimeout(() => {
+        if (!card.classList.contains('is-in')) settle(null);
+      }, 1400);
+      batchIndex += 1;
+    });
+  }, { rootMargin: '90px 0px 0px 0px', threshold: 0.02 });
+  function stageReveal(el) {
+    if (!el.classList.contains('is-in') && !el.classList.contains('is-entering')) {
+      el.classList.add('is-ready');
+      cardObserver.observe(el);
+    }
+  }
+
+  /* Load shimmer → photo reveal */
+  document.addEventListener('load', event => {
+    if (event.target.tagName !== 'IMG') return;
+    event.target.classList.add('img-loaded');
+  }, { capture: true });
+  document.querySelectorAll('img').forEach(img => { if (img.complete) img.classList.add('img-loaded'); });
+
+  /* Once-only reveals for static section furniture */
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-revealed');
+      sectionObserver.unobserve(entry.target);
+      const note = entry.target.matches('.about-note') ? entry.target : entry.target.querySelector('.about-note');
+      if (note) {
+        note.querySelectorAll('p').forEach((p, i) => p.style.setProperty('--w', i));
+        window.setTimeout(() => note.classList.add('is-scrub'), 120);
+      }
+    });
+  }, { rootMargin: '-10% 0px -10% 0px' });
+  ['.work-section .section-heading', '.about-content h2', '.about-note', '.contact-content h2', '.contact-link', '.site-footer']
+    .forEach(selector => { document.querySelectorAll(selector).forEach(el => sectionObserver.observe(el)); });
+
+  /* Wire cards that the gallery renders now or later */
+  function wire(cards) {
+    cards.forEach(card => {
+      if (!card.classList.contains('is-ready')) stageReveal(card);
+      card.querySelectorAll('img').forEach(img => { if (img.complete) img.classList.add('img-loaded'); });
+    });
+  }
+  wire(document.querySelectorAll('.photo-card'));
+  new MutationObserver(mutations => {
+    const fresh = [];
+    mutations.forEach(m => m.addedNodes.forEach(node => {
+      if (node.classList && node.classList.contains('photo-card')) fresh.push(node);
+      else if (node.querySelectorAll) node.querySelectorAll('.photo-card').forEach(c => fresh.push(c));
+    }));
+    if (fresh.length) wire(fresh);
+  }).observe(document.querySelector('#gallery'), { childList: true, subtree: true });
+
+  /* ── 3D tilt + cursor spotlight (desktop pointers only) ── */
+  if (fine) {
+    let tiltCard = null;
+    function applyTilt(event) {
+      if (!tiltCard) return;
+      const rect = tiltCard.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width;
+      const py = (event.clientY - rect.top) / rect.height;
+      tiltCard.style.setProperty('--mx', `${(px * 100).toFixed(1)}%`);
+      tiltCard.style.setProperty('--my', `${(py * 100).toFixed(1)}%`);
+      tiltCard.style.transform = `perspective(900px) rotateX(${((0.5 - py) * 7).toFixed(2)}deg) rotateY(${((px - 0.5) * 9).toFixed(2)}deg) translateY(-2px)`;
+    }
+    document.addEventListener('pointermove', event => {
+      const card = event.target.closest && event.target.closest('.photo-card');
+      if (card !== tiltCard) {
+        if (tiltCard) { tiltCard.classList.remove('tilting'); tiltCard.style.transform = ''; }
+        tiltCard = card;
+        if (tiltCard) tiltCard.classList.add('tilting');
+      }
+      if (tiltCard) applyTilt(event);
+    }, { passive: true });
+    document.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'mouse') return;
+      const card = event.target.closest && event.target.closest('.photo-card');
+      if (card) { card.style.transform = ''; card.classList.remove('tilting'); tiltCard = null; }
+    });
+  }
+
+  /* ── Lightbox peak: retrigger the entrance on every photo ── */
+  const lightboxImage = document.querySelector('#lightboxImage');
+  if (lightboxImage) {
+    const replay = () => {
+      lightboxImage.style.animation = 'none';
+      void lightboxImage.offsetWidth;
+      lightboxImage.style.animation = '';
+    };
+    lightboxImage.addEventListener('load', replay);
+  }
+})();
