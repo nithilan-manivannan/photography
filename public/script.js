@@ -80,16 +80,38 @@
     'Topslip diptych I · left','Topslip diptych I · right',
     'Topslip diptych II · left','Topslip diptych II · right',
     'Mangalore diptych · left','Mangalore diptych · right',
-    'Pollachi diptych · left','Pollachi diptych · right'
+    'Pollachi diptych · left','Pollachi diptych · right',
+    'Poolside diptych · left','Poolside diptych · right'
   ]);
   photos.forEach(photo => { if (PAIRED_TITLES.has(photo.title)) photo.paired = true; });
 
   /* Canonical collection order: canonical categories first (in ORDER
      sequence), then any extra (non-canonical) categories kept distinct */
   const ORDER = ['Mysore Water','Madras Sky','Topslip','Street Studies','Mysore',
-    'Portraits','Sky Studies','1937 Vauxhall 14DX',
+    'Portraits','Sky Studies','Poolside','1937 Vauxhall 14DX',
     'Mark II Ambassador','Soilside','Salem','Mangalore · 2025','Pollachi',
     'Pondicherry','Malleshwaram','After Hours'];
+
+  /* Collection-level captions (the Instagram post captions, verbatim) */
+  const CAPTIONS = {
+    'Mysore Water': null,
+    'Madras Sky': 'Cotton candy over madras💖',
+    'Topslip': 'Peacocks for aesthetics, elephants for power, bisons for attitude. Balanced ecosystem.🌱',
+    'Street Studies': 'T. Nagar, in a slightly different light 🌺',
+    'Mysore': null,
+    'Portraits': 'Ten frames, ten lives… I just passed through the middle.',
+    'Sky Studies': '"A bird doesn\'t sing because it has an answer, it sings because it has a song."',
+    'Poolside': 'Caught them mid-argument, mid-chaos, mid-whatever pigeons are always in the middle of. All of this, right at my apartment swimming pool. I raised the camera, they didn\'t care. No golden hour, no plan, just me and the birds..',
+    '1937 Vauxhall 14DX': 'Straight out of Britain\'s golden era — no touchscreens, no gimmicks, just pure presence 😮‍💨',
+    'Mark II Ambassador': 'Built like a tank, driven like a king.',
+    'Soilside': 'a little sunsoaked, a little soilside, fully in the moment.',
+    'Salem': null,
+    'Mangalore · 2025': 'A little late.... But the ocean doesn\'t mind. Mangalore \'25',
+    'Pollachi': 'Chased the river until it led us straight into the sunset.',
+    'Pondicherry': 'Old French buildings, warm light, and streets that made slowing down feel easy.',
+    'Malleshwaram': 'malleshwaram, 5pm',
+    'After Hours': 'Stayed after hours. The night had opinions. Turns out they were good ones...'
+  };
   const usedCategories = [...new Set(photos.map(photo => photo.category))];
   const categories = ORDER.filter(category => usedCategories.includes(category))
     .concat(usedCategories.filter(category => !ORDER.includes(category)));
@@ -131,6 +153,14 @@
       groupCount.textContent = `${String(groupPhotos.length).padStart(2,'0')} photographs`;
       meta.append(groupCount);
       heading.append(title,meta);
+      /* collection-level caption (the Instagram post caption, verbatim) */
+      const caption = CAPTIONS[category];
+      if (caption) {
+        const note = document.createElement('p');
+        note.className = 'gallery-group-caption';
+        note.textContent = caption;
+        heading.append(note);
+      }
       const grid = document.createElement('div');
       grid.className = 'gallery-grid';
       groupPhotos.forEach(photo => {
