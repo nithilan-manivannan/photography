@@ -891,3 +891,17 @@ body::after{
 @media(min-width:901px){
   .site-header{-webkit-backdrop-filter:blur(16px) saturate(1.5);backdrop-filter:blur(16px) saturate(1.5)}
 }
+
+/* ----------------------------------------------------------------
+   EDITORIAL EDGES — photos are square, print-mounted, no rounding.
+   Chrome (pills, chips, header) keeps its glass rounding; only
+   photographs and their plates go hard-corner. Slightly editorial:
+   letterspaced small-caps meta, tight print shadow.
+   ---------------------------------------------------------------- */
+.photo-card,.photo-card img{border-radius:0}
+.hero-visual,.hero-visual>img{border-radius:0}
+.lightbox figure img{border-radius:0}
+.photo-card img{box-shadow:0 0 0 1px rgba(122,92,30,.15),0 18px 48px -26px rgba(88,66,26,.3)}
+@media(max-width:900px){.photo-card img{box-shadow:0 0 0 1px rgba(122,92,30,.14),0 10px 26px -16px rgba(88,66,26,.3)}}
+.gallery-group-meta{text-transform:uppercase;letter-spacing:.16em;font-size:9px;font-family:var(--sans)}
+.gallery-group-location{letter-spacing:.14em}
