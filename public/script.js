@@ -198,6 +198,11 @@
       chip.classList.toggle('is-active', on);
       if (on) chip.setAttribute('aria-current', 'true'); else chip.removeAttribute('aria-current');
     });
+    /* keep the highlighted chip visible inside the strip on mobile */
+    const activeChip = chips().find(chip => chip.classList.contains('is-active'));
+    if (activeChip) {
+      try { activeChip.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); } catch (error) { /* older browsers */ }
+    }
     /* liquid-glass surge on the heading of the album just jumped to */
     if (pendingSurge && active === pendingSurge) {
       const group = document.querySelector(pendingSurge);
@@ -456,7 +461,7 @@
     const el = document.getElementById(hash.slice(1));
     if (!el) return;                                            /* unknown target: native jump */
     event.preventDefault();
-    target = clampTo(el.getBoundingClientRect().top + window.scrollY - 96);
+    target = clampTo(el.getBoundingClientRect().top + window.scrollY - 120);
     nudge();
   });
 
