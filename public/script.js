@@ -84,13 +84,15 @@
   ]);
   photos.forEach(photo => { if (PAIRED_TITLES.has(photo.title)) photo.paired = true; });
 
-  /* Canonical collection order */
+  /* Canonical collection order: canonical categories first (in ORDER
+     sequence), then any extra (non-canonical) categories kept distinct */
   const ORDER = ['Mysore Water','Madras Sky','Topslip','Street Studies','Mysore',
     'Portraits','Sky Studies','1937 Vauxhall 14DX',
     'Mark II Ambassador','Soilside','Salem','Mangalore · 2025','Pollachi',
     'Pondicherry','Malleshwaram','After Hours'];
-  const categories = ORDER.filter(category => photos.some(photo => photo.category === category))
-    .concat(photos.map(photo => photo.category).filter(category => !ORDER.includes(category) && !categoriesIncludes(category)));
+  const usedCategories = [...new Set(photos.map(photo => photo.category))];
+  const categories = ORDER.filter(category => usedCategories.includes(category))
+    .concat(usedCategories.filter(category => !ORDER.includes(category)));
   let currentIndex = 0;
   document.querySelector('#year').textContent = new Date().getFullYear();
 
@@ -475,7 +477,7 @@
     const el = document.getElementById(hash.slice(1));
     if (!el) return;                                            /* unknown target: native jump */
     event.preventDefault();
-    target = clampTo(el.getBoundingClientRect().top + window.scrollY - 120);
+    target = clampTo(el.getBoundingClientRect().top + window.scrollY - 156);
     nudge();
   });
 
