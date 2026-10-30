@@ -919,3 +919,13 @@ body::after{
 @media(prefers-reduced-motion:reduce){
   .hero h1{animation:none!important;opacity:1!important;transform:none}
 }
+
+/* ----------------------------------------------------------------
+   HEADER WEIGHT LIFT — display headers move to semibold (the 400 cut
+   read thin and got mistaken for a wrong font). Hero stays roman 400.
+   Source Serif 4 and Inter are loaded as VARIABLE fonts, so 600 is a
+   true glyph weight, not synthetic bolding.
+   ---------------------------------------------------------------- */
+.section-heading h2,.about-content h2{font-weight:600;letter-spacing:-.05em}
+.gallery-group-heading h3{font-weight:600;letter-spacing:-.03em}
+.wordmark-mark{font-weight:600}
