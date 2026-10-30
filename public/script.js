@@ -186,6 +186,7 @@
   /* ── Album scrollspy: highlight the chip of the album you're in ── */
   const chips = () => Array.from(filterList.querySelectorAll('.filter-chip'));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lastActive = '';
 
   function setActiveChip() {
     const marker = window.scrollY + 170;
@@ -198,10 +199,23 @@
       chip.classList.toggle('is-active', on);
       if (on) chip.setAttribute('aria-current', 'true'); else chip.removeAttribute('aria-current');
     });
-    /* keep the highlighted chip visible inside the strip on mobile */
-    const activeChip = chips().find(chip => chip.classList.contains('is-active'));
-    if (activeChip) {
-      try { activeChip.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); } catch (error) { /* older browsers */ }
+    /* nudge the chip STRIP itself (never the window) so the active chip
+       is visible on mobile — and only when the active album changes,
+       otherwise the spy fights the user's finger on every scroll tick */
+    if (active !== lastActive) {
+      lastActive = active;
+      const activeChip = chips().find(chip => chip.classList.contains('is-active'));
+      if (activeChip) {
+        const strip = filterList;
+        const chipLeft = activeChip.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+        const max = strip.scrollWidth - strip.clientWidth;
+        let to = strip.scrollLeft;
+        if (chipLeft < strip.scrollLeft) to = Math.max(0, chipLeft - 14);
+        else if (chipLeft + activeChip.offsetWidth > strip.scrollLeft + strip.clientWidth) to = Math.min(max, chipLeft + activeChip.offsetWidth - strip.clientWidth + 14);
+        if (to !== strip.scrollLeft) {
+          try { strip.scrollTo({ left: to, behavior: reduced ? 'auto' : 'smooth' }); } catch (error) { strip.scrollLeft = to; }
+        }
+      }
     }
     /* liquid-glass surge on the heading of the album just jumped to */
     if (pendingSurge && active === pendingSurge) {
