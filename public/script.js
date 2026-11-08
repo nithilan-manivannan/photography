@@ -233,7 +233,7 @@
   window.addEventListener('resize', updateStripFade);
 
   function setActiveChip() {
-    const marker = window.scrollY + 170;
+    const marker = window.scrollY + (window.__anchorOffset ? window.__anchorOffset() + 10 : 170);
     let active = '#gallery';
     document.querySelectorAll('.gallery-group').forEach(section => {
       if (section.getBoundingClientRect().top + window.scrollY <= marker) active = '#' + section.id;
@@ -254,8 +254,8 @@
         const chipLeft = activeChip.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
         const max = strip.scrollWidth - strip.clientWidth;
         let to = strip.scrollLeft;
-        if (chipLeft < strip.scrollLeft) to = Math.max(0, chipLeft - 14);
-        else if (chipLeft + activeChip.offsetWidth > strip.scrollLeft + strip.clientWidth) to = Math.min(max, chipLeft + activeChip.offsetWidth - strip.clientWidth + 14);
+        if (chipLeft < strip.scrollLeft) to = Math.max(0, chipLeft - 30);
+        else if (chipLeft + activeChip.offsetWidth > strip.scrollLeft + strip.clientWidth) to = Math.min(max, chipLeft + activeChip.offsetWidth - strip.clientWidth + 30);
         if (to !== strip.scrollLeft) {
           try { strip.scrollTo({ left: to, behavior: reduced ? 'auto' : 'smooth' }); } catch (error) { strip.scrollLeft = to; }
         }
@@ -307,6 +307,26 @@
   render();
   setActiveChip();
   updateStripFade();
+})();
+
+/* ── Anchor offset: derived from the sticky dock's real height, so
+   anchors never land under the glass no matter how the dock resizes. ── */
+(() => {
+  const dock = document.querySelector('.gallery-tools');
+  let offset = 156;
+  function measure() {
+    if (!dock) return;
+    const stickTop = parseFloat(getComputedStyle(dock).top) || 0;
+    const next = Math.round(stickTop + dock.offsetHeight + 14);
+    if (next > 40) {
+      offset = next;
+      document.documentElement.style.setProperty('--anchor-offset', next + 'px');
+    }
+  }
+  window.__anchorOffset = () => offset;
+  window.addEventListener('resize', measure, { passive: true });
+  window.addEventListener('load', measure);
+  measure();
 })();
 
 /* ─────────────────────────────────────────────────────────────────
@@ -520,7 +540,7 @@
     const el = document.getElementById(hash.slice(1));
     if (!el) return;                                            /* unknown target: native jump */
     event.preventDefault();
-    target = clampTo(el.getBoundingClientRect().top + window.scrollY - 156);
+    target = clampTo(el.getBoundingClientRect().top + window.scrollY - (window.__anchorOffset ? window.__anchorOffset() : 156));
     nudge();
   });
 
