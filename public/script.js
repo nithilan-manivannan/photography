@@ -220,6 +220,18 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let lastActive = '';
 
+  /* chip strip edges: fade only a side that still hides chips, so pills
+     are never hard-chopped by the glass dock */
+  function updateStripFade() {
+    const strip = filterList;
+    const max = strip.scrollWidth - strip.clientWidth;
+    strip.classList.toggle('is-scrollable', max > 2);
+    strip.classList.toggle('is-at-start', strip.scrollLeft <= 2);
+    strip.classList.toggle('is-at-end', max <= 2 || strip.scrollLeft >= max - 2);
+  }
+  filterList.addEventListener('scroll', updateStripFade, { passive: true });
+  window.addEventListener('resize', updateStripFade);
+
   function setActiveChip() {
     const marker = window.scrollY + 170;
     let active = '#gallery';
@@ -294,6 +306,7 @@
   updateChips();
   render();
   setActiveChip();
+  updateStripFade();
 })();
 
 /* ─────────────────────────────────────────────────────────────────
