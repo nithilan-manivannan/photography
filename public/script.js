@@ -238,11 +238,7 @@
   function resetZoom() { zoom = 1; panX = 0; panY = 0; applyZoom(); }
 
   function openLightbox(photo) {
-    let index = photos.indexOf(photo);
-    /* if a right half is opened directly, land on its left half so
-       prev/next navigate from the composed pair's true position */
-    if (index !== -1 && isPairRight(photos[index]) && pairPartner(index) !== -1) index = pairPartner(index);
-    currentIndex = index;
+    currentIndex = photos.indexOf(photo);
     showLightboxPhoto();
     lightbox.showModal();
   }
@@ -285,9 +281,6 @@
   document.querySelector('#lightboxNext').addEventListener('click', () => moveLightbox(1));
   lightbox.addEventListener('click', event => { if (event.target === lightbox) lightbox.close(); });
   lightbox.addEventListener('close', () => {
-    /* a close mid-drag (e.g. Esc while panning) must not leave the stage stuck */
-    dragStart = null;
-    lightboxStage.classList.remove('is-dragging');
     resetZoom();
     if (document.fullscreenElement === lightbox) document.exitFullscreen().catch(() => {});
   });
