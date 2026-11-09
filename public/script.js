@@ -4,14 +4,6 @@
   const count = document.querySelector('#collectionCount');
   const lightbox = document.querySelector('#lightbox');
   const lightboxImage = document.querySelector('#lightboxImage');
-  const lightboxStage = document.querySelector('#lightboxStage');
-  const lightboxPairL = document.querySelector('#lightboxPairL');
-  const lightboxPairR = document.querySelector('#lightboxPairR');
-  const zoomLevel = document.querySelector('#zoomLevel');
-  const zoomInBtn = document.querySelector('#zoomIn');
-  const zoomOutBtn = document.querySelector('#zoomOut');
-  const zoomResetBtn = document.querySelector('#zoomReset');
-  const fullBtn = document.querySelector('#lightboxFull');
   const heroCount = document.querySelector('#heroCount');
 
   /* ── Download / screenshot deterrents ─────────────────────────
@@ -198,45 +190,6 @@
     heroCount.textContent = `01 / ${photos.length}`;
   }
 
-  /* ── Diptych halves: the two chopped portrait cards are actually one
-     landscape, so the expanded view composes them back into one frame ── */
-  const isPairLeft = photo => /·\s*left$/i.test(photo.title || '');
-  const isPairRight = photo => /·\s*right$/i.test(photo.title || '');
-  function pairPartner(index) {
-    const photo = photos[index];
-    if (!photo) return -1;
-    if (isPairLeft(photo) && photos[index + 1] && isPairRight(photos[index + 1])) return index + 1;
-    if (isPairRight(photo) && photos[index - 1] && isPairLeft(photos[index - 1])) return index - 1;
-    return -1;
-  }
-
-  /* ── Zoom + pan state for the viewing room ── */
-  const ZOOM_MIN = 1, ZOOM_MAX = 4, ZOOM_STEP = 0.5;
-  let zoom = 1, panX = 0, panY = 0;
-
-  function clampPan() {
-    if (!lightboxStage) return;
-    const maxX = (lightboxStage.offsetWidth * (zoom - 1)) / 2;
-    const maxY = (lightboxStage.offsetHeight * (zoom - 1)) / 2;
-    panX = Math.min(maxX, Math.max(-maxX, panX));
-    panY = Math.min(maxY, Math.max(-maxY, panY));
-  }
-  function applyZoom() {
-    if (!lightboxStage) return;
-    lightboxStage.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
-    if (zoomLevel) zoomLevel.textContent = Math.round(zoom * 100) + '%';
-    lightbox.classList.toggle('is-zoomed', zoom > 1.001);
-    if (zoomOutBtn) zoomOutBtn.disabled = zoom <= ZOOM_MIN + 0.001;
-    if (zoomInBtn) zoomInBtn.disabled = zoom >= ZOOM_MAX - 0.001;
-  }
-  function setZoom(next) {
-    zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
-    if (zoom <= 1.001) { panX = 0; panY = 0; }
-    clampPan();
-    applyZoom();
-  }
-  function resetZoom() { zoom = 1; panX = 0; panY = 0; applyZoom(); }
-
   function openLightbox(photo) {
     currentIndex = photos.indexOf(photo);
     showLightboxPhoto();
@@ -245,102 +198,23 @@
   function showLightboxPhoto() {
     const photo = photos[currentIndex];
     if (!photo) return;
-    resetZoom();
-    const partner = pairPartner(currentIndex);
-    const pairing = partner !== -1;
-    lightbox.classList.toggle('is-pair', pairing);
-    if (pairing) {
-      const left = isPairLeft(photo) ? photo : photos[partner];
-      const right = isPairLeft(photo) ? photos[partner] : photo;
-      lightboxImage.removeAttribute('src');
-      lightboxPairL.src = left.url;
-      lightboxPairL.alt = `${left.title}, ${left.category}`;
-      lightboxPairR.src = right.url;
-      lightboxPairR.alt = `${right.title}, ${right.category}`;
-      lightbox.setAttribute('aria-label', `${left.category} diptych`);
-    } else {
-      lightboxPairL.removeAttribute('src');
-      lightboxPairR.removeAttribute('src');
-      lightboxImage.src = photo.url;
-      lightboxImage.alt = `${photo.title}, ${photo.category}`;
-      lightbox.setAttribute('aria-label', `${photo.title}, ${photo.category}`);
-    }
+    lightboxImage.src = photo.url;
+    lightboxImage.alt = `${photo.title}, ${photo.category}`;
   }
   function moveLightbox(direction) {
     if (!photos.length) return;
-    let next = (currentIndex + direction + photos.length) % photos.length;
-    /* never stop on the right half of a diptych — the pair shows as one frame */
-    if (isPairRight(photos[next]) && pairPartner(next) !== -1) {
-      next = (next + direction + photos.length) % photos.length;
-    }
-    currentIndex = next;
+    currentIndex = (currentIndex + direction + photos.length) % photos.length;
     showLightboxPhoto();
   }
   document.querySelector('#lightboxClose').addEventListener('click', () => lightbox.close());
   document.querySelector('#lightboxPrev').addEventListener('click', () => moveLightbox(-1));
   document.querySelector('#lightboxNext').addEventListener('click', () => moveLightbox(1));
   lightbox.addEventListener('click', event => { if (event.target === lightbox) lightbox.close(); });
-  lightbox.addEventListener('close', () => {
-    resetZoom();
-    if (document.fullscreenElement === lightbox) document.exitFullscreen().catch(() => {});
-  });
   document.addEventListener('keydown', event => {
     if (!lightbox.open) return;
     if (event.key === 'ArrowLeft') moveLightbox(-1);
     if (event.key === 'ArrowRight') moveLightbox(1);
-    if (event.key === '+' || event.key === '=') setZoom(zoom + ZOOM_STEP);
-    if (event.key === '-') setZoom(zoom - ZOOM_STEP);
-    if (event.key === '0') resetZoom();
   });
-
-  /* zoom controls */
-  if (zoomInBtn) zoomInBtn.addEventListener('click', () => setZoom(zoom + ZOOM_STEP));
-  if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => setZoom(zoom - ZOOM_STEP));
-  if (zoomResetBtn) zoomResetBtn.addEventListener('click', resetZoom);
-  lightbox.addEventListener('wheel', event => {
-    if (!lightbox.open) return;
-    event.preventDefault();
-    setZoom(zoom + (event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP));
-  }, { passive: false });
-  lightboxStage.addEventListener('dblclick', () => setZoom(zoom > 1.01 ? 1 : 2));
-
-  /* drag to pan while zoomed */
-  let dragStart = null;
-  lightboxStage.addEventListener('pointerdown', event => {
-    if (zoom <= 1.001 || event.button !== 0) return;
-    dragStart = { x: event.clientX, y: event.clientY, px: panX, py: panY };
-    lightboxStage.setPointerCapture(event.pointerId);
-    lightboxStage.classList.add('is-dragging');
-  });
-  lightboxStage.addEventListener('pointermove', event => {
-    if (!dragStart) return;
-    panX = dragStart.px + (event.clientX - dragStart.x);
-    panY = dragStart.py + (event.clientY - dragStart.y);
-    clampPan();
-    applyZoom();
-  });
-  const endDrag = () => { if (!dragStart) return; dragStart = null; lightboxStage.classList.remove('is-dragging'); };
-  lightboxStage.addEventListener('pointerup', endDrag);
-  lightboxStage.addEventListener('pointercancel', endDrag);
-
-  /* fullscreen */
-  if (fullBtn) {
-    if (!document.fullscreenEnabled) fullBtn.hidden = true;
-    fullBtn.addEventListener('click', () => {
-      const done = () => {};
-      if (document.fullscreenElement === lightbox) {
-        document.exitFullscreen().catch(done);
-      } else {
-        lightbox.requestFullscreen().catch(done);
-      }
-    });
-    document.addEventListener('fullscreenchange', () => {
-      const on = document.fullscreenElement === lightbox;
-      lightbox.classList.toggle('is-fullscreen', on);
-      fullBtn.setAttribute('aria-label', on ? 'Exit fullscreen' : 'Enter fullscreen');
-    });
-  }
-  applyZoom();
   /* ── Album scrollspy: highlight the chip of the album you're in ── */
   const chips = () => Array.from(filterList.querySelectorAll('.filter-chip'));
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
